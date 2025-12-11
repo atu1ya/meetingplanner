@@ -2,7 +2,10 @@
 const express = require('express');
 const path = require('path');
 
+
 const eventsRouter = require('./routes/events');
+const participantsRouter = require('./routes/participants');
+const availabilityRouter = require('./routes/availability');
 
 const app = express();
 
@@ -16,8 +19,11 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from /public
 app.use(express.static(path.join(__dirname, '../public')));
 
+
 // Use routes
 app.use('/', eventsRouter);
+app.use('/events/:id', participantsRouter);
+app.use('/events/:id', availabilityRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
