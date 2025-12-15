@@ -1,6 +1,6 @@
 app = "planmymeeting" # Change this to your unique Fly app name
 
-primary_region = "iad" # Or your preferred region
+primary_region = "syd" # Or your preferred region
 
 [build]
   builder = "heroku/buildpacks:20"
