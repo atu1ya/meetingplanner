@@ -1,17 +1,16 @@
 
+
 // src/routes/events.js
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-
 const timeBlocksUtil = require('../utils/timeBlocks');
+const bestTimesUtil = require('../utils/bestTimes');
 
 // GET /events/:id/summary - event summary for best times
 router.get('/events/:id/summary', (req, res) => {
   const event = db.getEventById(req.params.id);
   if (!event) return res.status(404).json({ error: 'Event not found' });
-  const timeBlocksUtil = require('../utils/timeBlocks');
-  const bestTimesUtil = require('../utils/bestTimes');
   const gridConfig = timeBlocksUtil.buildGridConfig(event);
   const { dateBlocks, timeBlocks, numDays, numTimes } = gridConfig;
   const { participants, mergedAvailability, cellParticipants } = db.getAllAvailabilityForEvent(event.id, numDays, numTimes, true);
