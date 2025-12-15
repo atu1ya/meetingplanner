@@ -1,3 +1,11 @@
+
+// src/routes/events.js
+const express = require('express');
+const router = express.Router();
+const db = require('../db');
+
+const timeBlocksUtil = require('../utils/timeBlocks');
+
 // GET /events/:id/summary - event summary for best times
 router.get('/events/:id/summary', (req, res) => {
   const event = db.getEventById(req.params.id);
@@ -25,12 +33,6 @@ router.get('/events/:id/summary', (req, res) => {
     cellParticipants // { ["d,t"]: { available: [names], unavailable: [names] } }
   });
 });
-// src/routes/events.js
-const express = require('express');
-const router = express.Router();
-const db = require('../db');
-
-const timeBlocksUtil = require('../utils/timeBlocks');
 
 // GET / - render home.ejs with event creation form
 router.get('/', (req, res) => {
