@@ -1,5 +1,5 @@
 
-// Main JS for When2meet Lite event page
+// Main JS for planmymeeting event page
 (function() {
 	// Elements
 	const configDiv = document.getElementById('event-config');

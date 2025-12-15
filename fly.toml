@@ -1,0 +1,44 @@
+app = "planmymeeting" # Change this to your unique Fly app name
+
+primary_region = "iad" # Or your preferred region
+
+[build]
+  builder = "heroku/buildpacks:20"
+
+[env]
+  NODE_ENV = "production"
+  DB_PATH = "/data/data.db"
+
+[mounts]
+  source = "data"
+  destination = "/data"
+
+[experimental]
+  auto_rollback = true
+
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    interval = 15
+    timeout = 2
+    grace_period = "10s"
+    restart_limit = 0
+
+  [[services.http_checks]]
+    interval = 10000
+    timeout = 2000
+    grace_period = "5s"
+    method = "get"
+    path = "/health"
+    protocol = "http"
+    tls_skip_verify = false
