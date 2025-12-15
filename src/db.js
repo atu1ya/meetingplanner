@@ -1,3 +1,12 @@
+// Safe migration: add meeting_name and host_name columns if missing
+function addColumnIfMissing(table, column, type) {
+  const row = db.prepare(`PRAGMA table_info(${table})`).all().find(r => r.name === column);
+  if (!row) {
+    db.prepare(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`).run();
+  }
+}
+addColumnIfMissing('events', 'meeting_name', 'TEXT');
+addColumnIfMissing('events', 'host_name', 'TEXT');
 // src/db.js
 
 const path = require('path');
@@ -65,12 +74,13 @@ function now() {
 function createEvent(eventData) {
   const id = eventData.id || uuidv4();
   const stmt = db.prepare(`
-    INSERT INTO events (id, name, start_date, end_date, min_time, max_time, timezone, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO events (id, meeting_name, host_name, start_date, end_date, min_time, max_time, timezone, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   stmt.run(
     id,
-    eventData.name,
+    eventData.meeting_name,
+    eventData.host_name,
     eventData.start_date,
     eventData.end_date,
     eventData.min_time,

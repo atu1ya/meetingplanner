@@ -5,11 +5,43 @@
      data-num-times="<%= numTimes %>"></div>
 <div class="event-container">
   <div class="event-left">
-    <h2><%= event.name %></h2>
+    <h2><%= meeting_name %></h2>
+    <div class="event-host">Host: <span id="event-host-name"><%= host_name %></span></div>
     <div class="event-dates">
       <span><%= event.start_date %> to <%= event.end_date %></span>
     </div>
     <div class="event-timezone">Timezone: <%= event.timezone %></div>
+    <script>
+    // Show (you) next to host if username matches
+    document.addEventListener('DOMContentLoaded', function() {
+      var host = document.getElementById('event-host-name');
+      var input = document.getElementById('username-input');
+      if (!host || !input) return;
+      function checkHost() {
+        var val = (input.value || '').trim();
+        if (val && val === host.textContent.trim()) {
+          if (!host.nextElementSibling || host.nextElementSibling.className !== 'host-you') {
+            var span = document.createElement('span');
+            span.className = 'host-you';
+            span.textContent = ' (you)';
+            span.style.color = '#888';
+            span.style.fontSize = '0.95em';
+            host.parentNode.insertBefore(span, host.nextSibling);
+          }
+        } else {
+          if (host.nextElementSibling && host.nextElementSibling.className === 'host-you') {
+            host.nextElementSibling.remove();
+          }
+        }
+      }
+      input.addEventListener('input', checkHost);
+      checkHost();
+    });
+    </script>
+    <style>
+    .event-host { margin-bottom: 0.5em; color: #444; font-size: 1.08em; }
+    .host-you { color: #888; font-size: 0.95em; }
+    </style>
     <div class="user-controls">
       <label for="username-input">Your name</label>
       <input id="username-input" type="text" autocomplete="off" placeholder="Type your name">

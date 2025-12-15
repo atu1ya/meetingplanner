@@ -6,8 +6,12 @@
 			<div class="form-error"><%= error %></div>
 		<% } %>
 		<label>
-			Event name<br>
-			<input type="text" name="name" required autocomplete="off">
+			Meeting name<br>
+			<input type="text" name="meeting_name" required autocomplete="off" maxlength="80">
+		</label>
+		<label>
+			Host name<br>
+			<input type="text" name="host_name" required autocomplete="off" maxlength="40">
 		</label>
 		<label>
 			Start date<br>

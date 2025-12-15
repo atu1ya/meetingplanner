@@ -40,10 +40,18 @@ router.get('/', (req, res) => {
 // POST /events - create event and redirect
 router.post('/events', (req, res) => {
   try {
-    const { name, start_date, end_date, min_time, max_time, timezone } = req.body;
+    let { meeting_name, host_name, start_date, end_date, min_time, max_time, timezone } = req.body;
+    meeting_name = (meeting_name || '').trim();
+    host_name = (host_name || '').trim();
     // Basic validation
-    if (!name || !start_date || !end_date || !min_time || !max_time || !timezone) {
+    if (!meeting_name || !host_name || !start_date || !end_date || !min_time || !max_time || !timezone) {
       return res.status(400).render('home', { error: 'All fields are required.' });
+    }
+    if (meeting_name.length < 1 || meeting_name.length > 80) {
+      return res.status(400).render('home', { error: 'Meeting name must be 1-80 characters.' });
+    }
+    if (host_name.length < 1 || host_name.length > 40) {
+      return res.status(400).render('home', { error: 'Host name must be 1-40 characters.' });
     }
     if (start_date > end_date) {
       return res.status(400).render('home', { error: 'Start date must be before or equal to end date.' });
@@ -51,7 +59,7 @@ router.post('/events', (req, res) => {
     if (min_time >= max_time) {
       return res.status(400).render('home', { error: 'Earliest time must be before latest time.' });
     }
-    const event = db.createEvent({ name, start_date, end_date, min_time, max_time, timezone });
+    const event = db.createEvent({ meeting_name, host_name, start_date, end_date, min_time, max_time, timezone });
     return res.redirect(`/events/${event.id}`);
   } catch (err) {
     console.error(err);
@@ -68,8 +76,13 @@ router.get('/events/:id', (req, res) => {
   const { dateBlocks, timeBlocks, numDays, numTimes } = gridConfig;
   // Empty mergedAvailability matrix
   const mergedAvailability = Array.from({ length: numDays }, () => Array(numTimes).fill(0));
+  // Fallbacks for old events
+  const meeting_name = (event.meeting_name && event.meeting_name.trim()) || 'Untitled meeting';
+  const host_name = (event.host_name && event.host_name.trim()) || 'Unknown host';
   res.render('event', {
     event,
+    meeting_name,
+    host_name,
     dateBlocks,
     timeBlocks,
     numDays,
